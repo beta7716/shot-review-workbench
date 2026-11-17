@@ -1,0 +1,5 @@
+[
+  {"id":1,"start":0,"end":3,"title":"选择镜头与位置","kind":"select"},
+  {"id":2,"start":3,"end":6,"title":"添加说明与附件","kind":"annotate"},
+  {"id":3,"start":6,"end":9,"title":"仅重做选中的片段","kind":"revise"}
+]

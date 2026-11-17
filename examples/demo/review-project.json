@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "title": "分镜批注示例 · 三个独立镜头",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "masterVideo": "out/master.mp4",
+  "renderAdapter": "render.mjs"
+}

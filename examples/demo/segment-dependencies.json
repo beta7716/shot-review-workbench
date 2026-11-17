@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "shared": ["index.html", "main.js", "scene.mjs", "timeline.json"],
+  "shots": {
+    "1": {"files": ["shots/shot-001.json"]},
+    "2": {"files": ["shots/shot-002.json"]},
+    "3": {"files": ["shots/shot-003.json"]}
+  }
+}

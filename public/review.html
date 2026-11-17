@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>分镜批注工作台</title>
+  <link rel="stylesheet" href="/review.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">分</span><div><h1>分镜批注工作台</h1><p id="project-title">正在读取工程…</p></div></div>
+    <div class="header-actions"><span id="save-state" class="save-state" role="status">正在加载</span><button id="export-json" type="button">导出批注 JSON</button><button id="copy-all" class="primary" type="button">复制全部批注 <span id="copy-count">0</span></button></div>
+  </header>
+  <main class="workspace">
+    <aside class="shot-panel panel">
+      <div class="panel-heading"><h2>镜头 / 片段</h2><span id="shot-count" class="muted">—</span></div>
+      <label class="search-label"><span class="sr-only">搜索片段</span><input id="shot-search" type="search" placeholder="查找镜头或内容"></label>
+      <div class="shot-filter"><button type="button" data-filter="all" class="active">全部</button><button type="button" data-filter="notes">有批注 <span id="annotated-count">0</span></button></div>
+      <div id="shots" class="shot-list" aria-label="镜头列表"></div>
+      <div class="shot-footer"><button id="prepare" type="button">准备片段预览</button><p>按片段缓存，播放更流畅。</p></div>
+    </aside>
+    <section class="viewer-panel">
+      <div class="viewer-toolbar"><div><span id="shot-label" class="eyebrow">尚未选择片段</span><h2 id="shot-title">读取镜头中</h2></div><div class="mode-switch" aria-label="预览范围"><button id="mode-shot" type="button">当前片段</button><button id="mode-full" type="button" class="active">整片</button></div></div>
+      <div class="video-wrap" id="video-wrap">
+        <video id="player" preload="metadata" playsinline></video>
+        <audio id="segment-audio" preload="metadata" hidden></audio>
+        <div id="marker-layer" aria-label="画面标记区域"><div id="region" hidden><span>修改区域</span></div></div>
+        <div id="player-placeholder"><b>正在载入画面</b><p>准备后可逐段播放并添加批注。</p></div>
+        <div id="mark-tip" hidden>在画面拖动框选，或单击标记位置</div>
+      </div>
+      <div class="transport">
+        <button id="previous" type="button" title="上一片段" aria-label="上一片段">‹</button><button id="play" class="play-button" type="button">播放</button><button id="next" type="button" title="下一片段" aria-label="下一片段">›</button>
+        <span id="clock">00:00.00</span><input id="seek" type="range" min="0" max="1" step="0.01" value="0" aria-label="预览进度"><span id="duration">00:00.00</span>
+      </div>
+      <div class="viewer-meta"><span id="preview-status">等待读取素材</span><label><input id="auto-next" type="checkbox" checked> 连续播放后续片段</label><label>速度 <select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></label></div>
+      <div class="review-actions"><button id="new-note" type="button" class="primary">＋ 批注当前画面</button><button id="mark" type="button" aria-pressed="false">框选修改位置</button><button id="clear-region" type="button" disabled>清除框选</button><span>只记录修改要求，确认后再改片段。</span></div>
+      <section class="notes-section">
+        <div class="section-heading"><h2>批注清单 <span id="note-total">0</span></h2><select id="notes-filter" aria-label="筛选批注"><option value="current">当前片段</option><option value="all">全部批注</option><option value="open">全部待修改</option><option value="global">全片批注</option></select></div>
+        <div id="notes" class="notes-list"></div>
+      </section>
+      <div class="render-bar"><div><b>批注 → 局部修改 → 合成全片</b><p>复制批注交给助手；助手修改源工程并重做对应片段后，再合成完整视频。</p></div><button id="compose" type="button">生成整体视频</button></div>
+      <div id="job-panel" class="job-panel" hidden><progress id="job-progress" max="100" value="0"></progress><span id="job-message"></span><a id="job-output" hidden>打开生成的视频</a></div>
+    </section>
+    <aside class="annotation-panel panel">
+      <div class="panel-heading"><h2 id="composer-title">添加批注</h2><button id="cancel-edit" type="button" class="text-button" hidden>取消编辑</button></div>
+      <form id="note-form">
+        <label class="field-label">批注范围<select id="scope"><option value="shot">当前片段</option><option value="global">全片整体</option></select></label>
+        <div class="target-card"><b id="target-title">尚未选择镜头</b><span id="target-range">—</span><p id="region-label">整个画面</p></div>
+        <div class="time-fields"><label class="field-label">开始（全片时间）<input id="note-start" inputmode="decimal" value="00:00.00" autocomplete="off"></label><label class="field-label">结束（全片时间）<input id="note-end" inputmode="decimal" value="00:00.00" autocomplete="off"></label></div>
+        <div class="time-shortcuts"><button id="use-time" type="button">设为当前时间</button><button id="use-shot" type="button">整个片段</button></div>
+        <label class="field-label text-label">需要怎样修改<textarea id="note-text" rows="7" placeholder="例如：把框选的卡片换成附件录屏，从点击按钮开始。保留底部字幕。"></textarea></label>
+        <label class="attachment-drop" for="attachments"><b>＋ 添加图片、视频或说明文件</b><span>作为本条批注的参考素材，保存在本机</span><input id="attachments" type="file" multiple></label>
+        <div id="draft-attachments" class="attachment-list"></div>
+        <p id="form-error" class="form-error" role="alert" hidden></p>
+        <button id="save-note" class="primary save-note" type="submit">保存批注</button>
+        <p class="composer-hint">批注会自动保存。框选仅用于说明位置，不会直接改变视频内容。</p>
+      </form>
+      <div class="workflow-guide"><span>01 看片并批注</span><span>02 复制全部批注给助手</span><span>03 修改指定片段，合成全片</span></div>
+      <a class="source-link" href="/source-editor.html" target="_blank">打开原源工程编辑器 ↗</a>
+    </aside>
+  </main>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <dialog id="copy-dialog"><div class="dialog-heading"><h2>全部批注</h2><button id="close-dialog" type="button">关闭</button></div><p>浏览器未允许直接复制。下方已选中全文，按 Ctrl+C 复制。</p><textarea id="copy-text" readonly aria-label="全部批注文本"></textarea><button id="select-copy-text" type="button">全选文本</button></dialog>
+  <script type="module" src="/review.js"></script>
+</body>
+</html>

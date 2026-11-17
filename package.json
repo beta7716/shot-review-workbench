@@ -1,0 +1,16 @@
+{
+  "name": "shot-review-workbench",
+  "version": "0.3.0",
+  "description": "Local video shot review, annotations and selective rerendering, with an AI agent skill.",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "demo": "node scripts/create-demo.mjs",
+    "segments": "node scripts/segments.mjs",
+    "check": "node scripts/check-release.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}
